@@ -8,9 +8,6 @@ redirect_from:
 ---
 
 {% include base_path %}
-# CHENGLONG LI
-**Contact Information:** (+46) 0700253183 | asuralmax0915@outlook.com
-
 ## EDUCATION
 **Faculty of Science and Technology, Uppsala University**  
 *Master of Science in Machine Learning and Statistics*  
@@ -34,36 +31,41 @@ GPA: 3.56/4
 **Playing Pong with DQN**  
 December 2024 – June 2024  
 Course Project, Uppsala, Sweden  
-- Conducted in-depth literature reviews and drafted detailed explanations of Deep Q-Networks (DQN).  
-- Designed and executed ablation studies to identify critical model components.  
-- Analyzed results to determine optimal hyperparameters.
+- Conducted in-depth literature reviews and drafted detailed explanations of the mathematical principles underlying Deep Q-Networks (DQN).  
+- Designed and executed ablation studies to identify the impact of different model components on performance.  
+- Analyzed experimental results to determine optimal hyperparameters, significantly improving model accuracy and efficiency.
 
 **Do we need more bikes?**  
 October 2023 – January 2024  
 Course Project, Uppsala, Sweden  
-- Collaborated on elucidating machine learning principles for models like LDA, QDA, k-NN, Decision Trees.  
-- Implemented data preprocessing techniques to enhance model performance.  
-- Achieved an accuracy rate of 91.2% on test dataset.
+- Collaborated with classmates to elucidate the mathematical principles underlying machine learning algorithms such as LDA, QDA, k-NN, Decision Trees.  
+- Implemented data preprocessing techniques to enhance feature relevance and overall model performance.  
+- Successfully optimized and applied these models to a test dataset, achieving an accuracy rate of 91.2%.
 
 **Trend Prediction of Financial Data Changes based on Time-series Analysis Model**  
 December 2022 - June 2023  
 Undergraduate Thesis, Jinan, China  
-- Studied and implemented time series analysis models in Python.  
-- Focused on stock price prediction using ARIMA, LSTM, and AT-LSTM models.
+- Conducted an in-depth study of various time series analysis models and implemented these models in Python, focusing on applications in real-world datasets.  
+- Explored and implemented stock price prediction methods using the ARIMA model, LSTM model, and AT-LSTM model, enhancing predictive accuracy and financial analysis capabilities.
 
 ## INTERNSHIP & WORKING EXPERIENCE
 **ACM Society of Shandong University of Finance and Economics**  
 *President*  
 September 2020 - June 2021, Jinan, China  
-- Oversaw selection and management of society members.  
-- Organized training on ACM and ICPC competition problems.
+- Oversaw the selection and management of members within the ACM Society, ensuring effective operation and member engagement.  
+- Organized and led training sessions for society members on ACM and ICPC competition problems, fostering skill development and competitive success.
 
 ## HONORS & SCHOLARSHIPS
-- Excellent Bachelor’s Thesis, Shandong University of Finance and Economics, October 2023  
-- First Prize, Shandong University of Finance and Economics Scholarship, October 2022  
+- Excellent Bachelor’s Thesis of Shandong University of Finance and Economics, October 2023  
+- Excellent Graduates of Shandong University of Finance and Economics, March 2023  
+- First Prize, Scholarship of Shandong University of Finance and Economics, October 2022  
+- Second Prize, Scholarship of Shandong University of Finance and Economics, October 2021  
 - Second Prize, National Undergraduate Mathematical Modeling Competition of China, October 2021  
+- Second Prize, Scholarship of Shandong University of Finance and Economics, November 2020  
+- First Prize, Shandong University of Finance and Economics Business Plan Competition, November 2020  
+- Second Prize, Lanqiao Information Technology Professionals Competition, October 2020  
 
 ## SKILLS
-- **Languages:** Fluent in English, Proficient in Chinese Mandarin  
+- **Language:** Fluent in written and spoken English, proficient in Chinese Mandarin.  
 - **Software:** Microsoft Office, MySQL  
-- **Programming:** MATLAB, C++, Python  
+- **Programming:** Proficient in MATLAB, C++, Python  
