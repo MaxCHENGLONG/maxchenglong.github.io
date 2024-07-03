@@ -10,4 +10,4 @@ I'm a seconed year graduate student from [Department of Information Technology](
 
 I am seeking to pursue a PhD position starting in Fall 2025, focusing on my research interests in machine learning on graphs and machine learning theory. 
 
-You can find my CV here: [Chenglong Li's Curriculum Vitae](../assets/Curriculum_Vitae.pdf).
+You can find my CV here: [Chenglong Li's Curriculum Vitae](../assets/LICHENGLONGCV20240703.pdf).
