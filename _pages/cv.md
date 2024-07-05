@@ -29,7 +29,7 @@ GPA: 3.56/4
 
 ## RESEARCH & PROJECTS
 **Playing Pong with DQN**  
-December 2024 – June 2024  
+February 2024 – June 2024  
 Course Project, Uppsala, Sweden  
 - Conducted in-depth literature reviews and drafted detailed explanations of the mathematical principles underlying Deep Q-Networks (DQN).  
 - Designed and executed ablation studies to identify the impact of different model components on performance.  
