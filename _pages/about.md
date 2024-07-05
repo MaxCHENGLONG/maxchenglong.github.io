@@ -12,7 +12,7 @@ I am seeking to pursue a PhD position starting in Fall 2025, focusing on my rese
 
 You can find my documents here: 
 - [Curriculum Vitae (EN)](../assets/CV-Chenglong-Li.pdf)
-- [Curriculum Vitae (CN)]
+- [Curriculum Vitae (CN)](../assets/CV-Chenglong-Li-CN20240705.pdf)
 - [Master's Transcript](../assets/UU-Transcript-Chenglong-Li.pdf)
 - [Bachelor's Transcript](../assets/SDUFE-Transcript-Chenglong-Li.pdf)
 - [Bachelor's Thesis](../assets/Bachelorthesis-Chenglong-Li.pdf)
