@@ -15,4 +15,4 @@ You can find my documents here:
 - [Curriculum Vitae (CN)](../assets/CV-Chneglong-Li-CN20240705.pdf)
 - [Master's Transcript](../assets/UU-Transcript-Chenglong-Li.pdf)
 - [Bachelor's Transcript](../assets/SDUFE-Transcript-Chenglong-Li.pdf)
-: - [Bachelor's Thesis](../assets/Bachelorthesis-Chenglong-Li.pdf)
+<! - [Bachelor's Thesis](../assets/Bachelorthesis-Chenglong-Li.pdf) >
