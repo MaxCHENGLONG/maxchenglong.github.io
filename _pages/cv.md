@@ -68,4 +68,4 @@ September 2020 - June 2021, Jinan, China
 ## SKILLS
 - **Language:** Fluent in written and spoken English, proficient in Chinese Mandarin.  
 - **Software:** Microsoft Office, MySQL  
-- **Programming:** Proficient in MATLAB, C++, Python  
+- **Programming:** Proficient in Python, C++, Matlab  
