@@ -28,7 +28,7 @@ GPA: 3.56/4
 **Core Courses:** Micro-Economics, Macro-Economics, Finance, Econometrics, Financial Market, Financial Derivatives, Investment Banking, Financial Engineering, Financial Risk Management  
 
 ## RESEARCH & PROJECTS
-**Playing Pong with DQN**  
+**[Playing Pong with DQN](https://github.com/MaxCHENGLONG/1RT700-Statistical-Machine-Learning-UU)**  
 February 2024 – June 2024  
 Course Project, Uppsala, Sweden  
 - Conducted in-depth literature reviews and drafted detailed explanations of the mathematical principles underlying Deep Q-Networks (DQN).  
