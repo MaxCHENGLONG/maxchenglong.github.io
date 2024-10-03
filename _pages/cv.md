@@ -50,7 +50,7 @@ Undergraduate Thesis, Jinan, China
 
 ## INTERNSHIP & WORKING EXPERIENCE
 **ACM Society of Shandong University of Finance and Economics**  
-*President*  
+*Club President*  
 September 2020 - June 2021, Jinan, China  
 - Oversaw the selection and management of members within the ACM Society, ensuring effective operation and member engagement.  
 - Organized and led training sessions for society members on ACM and ICPC competition problems, fostering skill development and competitive success.
