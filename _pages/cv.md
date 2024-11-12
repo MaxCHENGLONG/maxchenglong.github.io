@@ -31,9 +31,10 @@ GPA: 3.56/4
 **Studying local and global loss landscapes in federated learning**
 September 2024 – Present
 Course Project, Uppsala, Sweden
-Train a neural network model in both a centralized environment and a federated environment using the FEDn framework.
-Conduct experiments in the federated setting with balanced datasets to assess model performance.
-Analyze the loss landscapes of the models trained in both settings, focusing on the global model and the local models from individual clients.
+- Train a neural network model in both a centralized environment and a federated environment using the FEDn framework.
+- Conduct experiments in the federated setting with balanced datasets to assess model performance.
+- Analyze the loss landscapes of the models trained in both settings, focusing on the global model and the local models from individual clients.
+
 **Playing Pong with DQN**
 February 2024 – June 2024  
 Course Project, Uppsala, Sweden  
