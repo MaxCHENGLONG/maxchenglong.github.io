@@ -29,29 +29,25 @@ GPA: 3.56/4
 
 ## RESEARCH & PROJECTS
 **Studying local and global loss landscapes in federated learning**<br>
-September 2024 – Present <br>
-Course Project, Uppsala, Sweden
+September 2024 – Present, Course Project, Uppsala, Sweden
 - Train a neural network model in both a centralized environment and a federated environment using the FEDn framework.
 - Conduct experiments in the federated setting with balanced datasets to assess model performance.
 - Analyze the loss landscapes of the models trained in both settings, focusing on the global model and the local models from individual clients.
 
 **Playing Pong with DQN** <br>
-February 2024 – June 2024 <br>
-Course Project, Uppsala, Sweden  
+February 2024 – June 2024, Course Project, Uppsala, Sweden  
 - Conducted in-depth literature reviews and drafted detailed explanations of the mathematical principles underlying Deep Q-Networks (DQN).  
 - Designed and executed ablation studies to identify the impact of different model components on performance.  
 - Analyzed experimental results to determine optimal hyperparameters, significantly improving model accuracy and efficiency.
 
 **Do we need more bikes?**  <br>
-October 2023 – January 2024 <br>
-Course Project, Uppsala, Sweden  
+October 2023 – January 2024, Course Project, Uppsala, Sweden  
 - Collaborated with classmates to elucidate the mathematical principles underlying machine learning algorithms such as LDA, QDA, k-NN, Decision Trees.  
 - Implemented data preprocessing techniques to enhance feature relevance and overall model performance.  
 - Successfully optimized and applied these models to a test dataset, achieving an accuracy rate of 91.2%.
 
 **Trend Prediction of Financial Data Changes based on Time-series Analysis Model**  <br>
-December 2022 - June 2023 <br>
-Undergraduate Thesis, Jinan, China  
+December 2022 - June 2023, Undergraduate Thesis, Jinan, China  
 - Conducted an in-depth study of various time series analysis models and implemented these models in Python, focusing on applications in real-world datasets.  
 - Explored and implemented stock price prediction methods using the ARIMA model, LSTM model, and AT-LSTM model, enhancing predictive accuracy and financial analysis capabilities.
 
