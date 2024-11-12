@@ -28,14 +28,20 @@ GPA: 3.56/4
 **Core Courses:** Micro-Economics, Macro-Economics, Finance, Econometrics, Financial Market, Financial Derivatives, Investment Banking, Financial Engineering, Financial Risk Management  
 
 ## RESEARCH & PROJECTS
-**[Playing Pong with DQN](https://github.com/MaxCHENGLONG/1RT747-Reinforcement-Learning-UU)**  
+**Studying local and global loss landscapes in federated learning**
+September 2024 – Present
+Course Project, Uppsala, Sweden
+Train a neural network model in both a centralized environment and a federated environment using the FEDn framework.
+Conduct experiments in the federated setting with balanced datasets to assess model performance.
+Analyze the loss landscapes of the models trained in both settings, focusing on the global model and the local models from individual clients.
+**Playing Pong with DQN**
 February 2024 – June 2024  
 Course Project, Uppsala, Sweden  
 - Conducted in-depth literature reviews and drafted detailed explanations of the mathematical principles underlying Deep Q-Networks (DQN).  
 - Designed and executed ablation studies to identify the impact of different model components on performance.  
 - Analyzed experimental results to determine optimal hyperparameters, significantly improving model accuracy and efficiency.
 
-**[Do we need more bikes?](https://github.com/MaxCHENGLONG/1RT700-Statistical-Machine-Learning-UU)**  
+**Do we need more bikes?**  
 October 2023 – January 2024  
 Course Project, Uppsala, Sweden  
 - Collaborated with classmates to elucidate the mathematical principles underlying machine learning algorithms such as LDA, QDA, k-NN, Decision Trees.  
