@@ -29,7 +29,7 @@ GPA: 3.56/4
 
 ## RESEARCH & PROJECTS
 **Studying local and global loss landscapes in federated learning**
-September 2024 – Present 
+September 2024 – Present <br>
 Course Project, Uppsala, Sweden
 - Train a neural network model in both a centralized environment and a federated environment using the FEDn framework.
 - Conduct experiments in the federated setting with balanced datasets to assess model performance.
