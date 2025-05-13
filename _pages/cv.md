@@ -8,67 +8,69 @@ redirect_from:
 ---
 
 {% include base_path %}
-## EDUCATION
-**Faculty of Science and Technology, Uppsala University**  
-*Master of Science in Machine Learning and Statistics*  
-August 2023 – Ongoing, Uppsala, Sweden  
-GPA: 3.4/4  
-**Core Courses:** Statistical Machine Learning, Theoretical Foundations for DS, Applied Linear Algebra for DS, Reinforcement Learning  
 
-**School of Computer Science and Technology, Shandong University of Finance and Economics**  
-*Bachelor of Engineering in Computer Science and Technology*  
-September 2019 - June 2023, Jinan, China  
-GPA: 3.46/4  
-**Core Courses:** Programming of Advanced Language, Discrete Mathematics, Data Structure, Computer Organization and Architecture, Algorithms Analysis and Design, Software Engineering  
+### Contact
+**Chenglong Li**  
+Uppsala, Sweden · asuralmax0915@outlook.com · +46 700 253 183 · [LinkedIn](https://www.linkedin.com/in/chenglong-li-76903b291/) · [GitHub](https://github.com/MaxCHENGLONG)
+
+## EDUCATION
+**Department of Information Technology, Uppsala University**  
+*MSc in Data Science (Machine Learning & Statistics)*  
+August 2023 – Present, Uppsala, Sweden  
+GPA: 3.6 / 4.0 :contentReference[oaicite:0]{index=0}:contentReference[oaicite:1]{index=1}  
+**Key courses:** Statistical Machine Learning, Data Engineering I, Applied Linear Algebra for Data Science, Reinforcement Learning, Computer-Intensive Statistics and Applications :contentReference[oaicite:2]{index=2}:contentReference[oaicite:3]{index=3}  
+
+**School of Computer Science & Technology, Shandong University of Finance and Economics**  
+*BSc in Computer Science*  
+September 2019 – June 2023, Jinan, China  
+GPA: 3.46 / 4.0 :contentReference[oaicite:4]{index=4}:contentReference[oaicite:5]{index=5}  
+**Key courses:** Data Structure, Computer Organization and Architecture, Algorithms Analysis and Design, Computer Networks, Artificial Intelligence, Machine Learning, Natural Language Processing :contentReference[oaicite:6]{index=6}:contentReference[oaicite:7]{index=7}  
 
 **School of Finance, Shandong University of Finance and Economics**  
-*Bachelor of Economics in Finance (Minor)*  
-September 2020 - June 2023, Jinan, China  
-GPA: 3.56/4  
-**Core Courses:** Micro-Economics, Macro-Economics, Finance, Econometrics, Financial Market, Financial Derivatives, Investment Banking, Financial Engineering, Financial Risk Management  
+*BEc in Finance (Minor)*  
+September 2020 – June 2023, Jinan, China  
+GPA: 3.56 / 4.0 :contentReference[oaicite:8]{index=8}:contentReference[oaicite:9]{index=9}  
+**Key courses:** Micro-Economics, Macro-Economics, Finance, Econometrics, Financial Market, Financial Derivatives, Investment Banking, Financial Engineering, Financial Risk Management :contentReference[oaicite:10]{index=10}:contentReference[oaicite:11]{index=11}  
 
-## RESEARCH & PROJECTS
-**Studying local and global loss landscapes in federated learning**<br>
-September 2024 – Present, Course Project, Uppsala, Sweden
-- Train a neural network model in both a centralized environment and a federated environment using the FEDn framework.
-- Conduct experiments in the federated setting with balanced datasets to assess model performance.
-- Analyze the loss landscapes of the models trained in both settings, focusing on the global model and the local models from individual clients.
+## PROJECTS & RESEARCH
+**Mitigating Representation Bias in Extremely Imbalanced Data via BM-GAN**  
+Master Thesis – Uppsala University | January 2025 – June 2025 :contentReference[oaicite:12]{index=12}:contentReference[oaicite:13]{index=13}  
+- Generated targeted synthetic samples with a conditional BM-GAN, strengthening minority-class representation.  
+- Benchmarked 10 oversampling/generative methods (e.g., SMOTE, cGAN) on 3 datasets, evaluating NB/k-NN/SVM/CNN classifiers.  
+- Built a validation framework to quantify classification robustness and synthetic-data utility.  
 
-**Playing Pong with DQN** <br>
-February 2024 – June 2024, Course Project, Uppsala, Sweden  
-- Conducted in-depth literature reviews and drafted detailed explanations of the mathematical principles underlying Deep Q-Networks (DQN).  
-- Designed and executed ablation studies to identify the impact of different model components on performance.  
-- Analyzed experimental results to determine optimal hyperparameters, significantly improving model accuracy and efficiency.
+**Studying Local and Global Loss Landscapes in Federated Learning**  
+Course Project – Uppsala University | September 2024 – January 2025 :contentReference[oaicite:14]{index=14}:contentReference[oaicite:15]{index=15}  
+- Implemented FedNet/ResNet pipelines with FedAvg & FedAdam across varying client counts and IID/non-IID splits.  
+- Applied path-norm analysis showing FedAvg’s lower variance and greater stability under heterogeneous data.  
+- Discovered five-client non-IID training on CIFAR-10 improved generalization over two-client baselines.  
 
-**Do we need more bikes?**  <br>
-October 2023 – January 2024, Course Project, Uppsala, Sweden  
-- Collaborated with classmates to elucidate the mathematical principles underlying machine learning algorithms such as LDA, QDA, k-NN, Decision Trees.  
-- Implemented data preprocessing techniques to enhance feature relevance and overall model performance.  
-- Successfully optimized and applied these models to a test dataset, achieving an accuracy rate of 91.2%.
+**Prediction of Financial Trends via Time-Series Models**  
+Bachelor Thesis – Shandong University of Finance and Economics | December 2022 – June 2023 :contentReference[oaicite:16]{index=16}:contentReference[oaicite:17]{index=17}  
+- Proposed an attention-enhanced LSTM cutting forecasting error by 12–18 % versus vanilla LSTM.  
+- Ran 50 + experiments (MAE/MSE/RMSE), achieving 0.055–0.077 error after normalization and window tuning.  
+- Analysed volatility regimes, finding 30 %+ accuracy drops during shocks that guided model refinements.  
 
-**Trend Prediction of Financial Data Changes based on Time-series Analysis Model**  <br>
-December 2022 - June 2023, Undergraduate Thesis, Jinan, China  
-- Conducted an in-depth study of various time series analysis models and implemented these models in Python, focusing on applications in real-world datasets.  
-- Explored and implemented stock price prediction methods using the ARIMA model, LSTM model, and AT-LSTM model, enhancing predictive accuracy and financial analysis capabilities.
+*Earlier course projects (e.g., “Playing Pong with DQN”, “Do We Need More Bikes?”) available on request.*
 
-## INTERNSHIP & WORKING EXPERIENCE
-**ACM Society of Shandong University of Finance and Economics**  
-*Club President*  
-September 2020 - June 2021, Jinan, China  
-- Oversaw the selection and management of members within the ACM Society, ensuring effective operation and member engagement.  
-- Organized and led training sessions for society members on ACM and ICPC competition problems, fostering skill development and competitive success.
+## EXPERIENCE
+**President – ACM Student Society, Shandong University of Finance and Economics**  
+September 2020 – June 2021, Jinan, China :contentReference[oaicite:18]{index=18}:contentReference[oaicite:19]{index=19}  
+- Recruited members and organised 10 + workshops/contests on data-structures and algorithms.  
+- Maintained the university Online Judge platform, delivering updates and debugging support.  
+- Ran weekly ACM-ICPC training in dynamic programming, graph theory, and related topics.  
 
 ## HONORS & SCHOLARSHIPS
-- Excellent Bachelor’s Thesis of Shandong University of Finance and Economics, October 2023  
-- Excellent Graduates of Shandong University of Finance and Economics, March 2023  
-- First Prize, Scholarship of Shandong University of Finance and Economics, October 2022  
-- Second Prize, Scholarship of Shandong University of Finance and Economics, October 2021  
-- Second Prize, National Undergraduate Mathematical Modeling Competition of China, October 2021  
-- Second Prize, Scholarship of Shandong University of Finance and Economics, November 2020  
-- First Prize, Shandong University of Finance and Economics Business Plan Competition, November 2020  
-- Second Prize, Lanqiao Information Technology Professionals Competition, October 2020  
+- Excellent Bachelor’s Thesis, SDUFE, Oct 2023  
+- Excellent Graduate, SDUFE, Mar 2023  
+- First Prize Scholarship, SDUFE, Oct 2022  
+- Second Prize Scholarship, SDUFE, Oct 2021  
+- Second Prize, National Undergraduate Mathematical Modeling Competition of China, Oct 2021  
+- Second Prize Scholarship, SDUFE, Nov 2020  
+- First Prize, SDUFE Business Plan Competition, Nov 2020  
+- Second Prize, Lanqiao Information Technology Professionals Competition, Oct 2020  
 
-## SKILLS
-- **Language:** Fluent in written and spoken English, proficient in Chinese Mandarin.  
-- **Software:** Microsoft Office, MySQL  
-- **Programming:** Proficient in Python, C++, Matlab  
+## TECHNOLOGIES
+**Languages:** English (fluent), Chinese Mandarin (native)  
+**Software:** Microsoft Office, MySQL  
+**Programming:** Python, C++, MATLAB  
