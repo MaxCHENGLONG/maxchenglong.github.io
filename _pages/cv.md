@@ -16,7 +16,7 @@ asuralmax0915@outlook.com · +46 700 253 183 · [LinkedIn](https://www.linkedin.
 
 ## EDUCATION
 **Department of Electrical Engineering (ISY), Linköping University**<br>
-*PhD in Electrical Engineering with specialization in Automatic Control* ｜ Incoming, Linköping, Sweden <br>
+*PhD Student in Electrical Engineering with specialization in Automatic Control* ｜ Incoming, Linköping, Sweden <br>
 **Research Focus:**: Machine Learning, with emphasis on generative models and instabilities arising from cycles of retraining on mixtures of human- and machine-generated data. <br>
 
 **Department of Information Technology, Uppsala University**   <br>
