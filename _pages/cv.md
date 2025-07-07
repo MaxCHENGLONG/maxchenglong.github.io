@@ -11,9 +11,13 @@ redirect_from:
 
 ### Contact
 **Chenglong Li**  
-Uppsala, Sweden · asuralmax0915@outlook.com · +46 700 253 183 · [LinkedIn](https://www.linkedin.com/in/chenglong-li-76903b291/) · [GitHub](https://github.com/MaxCHENGLONG)
+Linköping, Sweden · asuralmax0915@outlook.com · +46 700 253 183 · [LinkedIn](https://www.linkedin.com/in/chenglong-li-76903b291/) · [GitHub](https://github.com/MaxCHENGLONG)
 
 ## EDUCATION
+**Department of Electrical Engineering (ISY), Linköping University**
+*PhD in Electrical Engineering with specialization in Automatic Control* ｜ Incoming, Linköping, Sweden
+**Research Focus:**: Machine Learning, with emphasis on generative models and instabilities arising from cycles of retraining on mixtures of human- and machine-generated data.
+
 **Department of Information Technology, Uppsala University**  
 *MSc in Data Science (Machine Learning & Statistics)* | August 2023 – Present, Uppsala, Sweden  
 **GPA:** 3.6 / 4.0 
