@@ -22,18 +22,3 @@ layout: default
     {{ content }}
   </div>
 </div>
-
-{{ content }}
-
-{% if page.show_publications %}
-  <h2>Publications</h2>
-  {% for post in site.publications reversed %}
-    <div class="publication-item">
-      <strong>{{ post.title }}</strong><br>
-      {{ post.authors }}<br>
-      <em>{{ post.journal }}</em>, {{ post.date | date: "%Y" }}<br>
-      <a href="{{ post.url | relative_url }}">Link</a>
-    </div>
-    <br>
-  {% endfor %}
-{% endif %}
