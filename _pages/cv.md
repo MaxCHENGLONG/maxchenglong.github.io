@@ -20,17 +20,17 @@ Linköping, Sweden · asuralmax0915@outlook.com · +46 700 253 183 · [LinkedIn]
 
 **Department of Information Technology, Uppsala University**  
 *MSc in Data Science (Machine Learning & Statistics)* | August 2023 – Present, Uppsala, Sweden  
-**GPA:** 3.6 / 4.0 
+**GPA:** 3.6 / 4.0 <br>
 **Key courses:** Statistical Machine Learning, Data Engineering I, Applied Linear Algebra for Data Science, Reinforcement Learning, Computer-Intensive Statistics and Applications  
 
 **School of Computer Science & Technology, Shandong University of Finance and Economics**  
 *BSc in Computer Science*  | September 2019 – June 2023, Jinan, China  
-**GPA:** 3.46 / 4.0 
+**GPA:** 3.46 / 4.0 <br>
 **Key courses:** Data Structure, Computer Organization and Architecture, Algorithms Analysis and Design, Computer Networks, Artificial Intelligence, Machine Learning, Natural Language Processing
 
 **School of Finance, Shandong University of Finance and Economics**  
 *BEc in Finance (Minor)*  | September 2020 – June 2023, Jinan, China  
-**GPA:** 3.56 / 4.0
+**GPA:** 3.56 / 4.0 <br>
 **Key courses:** Micro-Economics, Macro-Economics, Finance, Econometrics, Financial Market, Financial Derivatives, Investment Banking, Financial Engineering, Financial Risk Management
 
 ## PROJECTS & RESEARCH
