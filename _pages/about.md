@@ -6,4 +6,6 @@ redirect_from:
   - /about/
   - /about.html
 ---
-I am a second-year graduate student in the [Department of Information Technology](https://www2.it.uu.se/itwiki.php?page=first&action=browse&lang=en) at [Uppsala University](https://www.uu.se/), majoring in Machine Learning and Statistics.
+I hold a Master's degree in Machine Learning and Statistics from the Department of Information Technology, Uppsala University, and will commence my PhD studies at Linköping University in September 2025.
+
+I will soon begin my PhD at Linköping University, focusing on machine learning, particularly generative models and instabilities arising from cycles of retraining on mixtures of human- and machine-generated data. My research aims to better understand model collapse and contribute to the development of more stable and robust AI systems.
