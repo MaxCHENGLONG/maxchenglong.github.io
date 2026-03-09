@@ -33,7 +33,7 @@ portrait_caption: >-
 
 education:
 - name: Linköping University
-  logo: /assets/images/badges/LiU_primary_black.png
+  logo: /assets/images/badges/LiU_secondary_1_black.png
   position: >- 
     Division of Automatic Control <br/>
     Ph.D. Student
@@ -49,7 +49,7 @@ education:
 
 experience:
 - name: Linköping University
-  logo: /assets/images/badges/LiU_primary_black.png
+  logo: /assets/images/badges/LiU_secondary_1_black.png
   position: Lab Assistant (TSRT12/21)
   date: Dec. 2025 - present
 
