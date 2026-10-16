@@ -39,3 +39,13 @@ collections:
   - publications
   - news
   - blog
+
+# Blog posts live in _posts/, named YYYY-MM-DD-title.md
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      navbar_title: Blog
+      permalink: /blog/:year/:title/

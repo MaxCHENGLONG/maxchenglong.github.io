@@ -8,7 +8,7 @@
         {% endif %}
     </h6>
     {% for item in publications limit:include.limit %}
-        {% include widgets/publication_item.html item=item first=false last=false %}
+        {% include widgets/publication_item_simple.html item=item %}
     {% endfor %}
     {% if count_publications > 0 %}
     <h6 class="d-block p-3 mt-0 text-right">

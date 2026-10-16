@@ -1,0 +1,8 @@
+{%- comment -%}
+Embed a standalone interactive page (e.g. /demos/my-demo/index.html) in a blog article.
+Usage: {% include interactive.html src="/demos/my-demo/" height="450px" caption="Some caption" %}
+{%- endcomment -%}
+<figure class="post-figure">
+<iframe src="{{ include.src | relative_url }}" style="height: {{ include.height | default: '450px' }};" loading="lazy"></iframe>
+<figcaption>{% if include.caption %}{{ include.caption }} {% endif %}<a href="{{ include.src | relative_url }}" target="_blank">Open in new tab <i class="fas fa-external-link-alt"></i></a></figcaption>
+</figure>

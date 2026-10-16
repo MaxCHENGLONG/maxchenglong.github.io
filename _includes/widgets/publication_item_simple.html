@@ -1,0 +1,15 @@
+{%- comment -%}
+Compact publication entry for the homepage: title, authors, venue, year and DOI only.
+{%- endcomment -%}
+{% assign item = include.item %}
+{% if item.pub_date %}{% assign year = item.pub_date %}{% else %}{% assign year = item.date | date: "%Y" %}{% endif %}
+<div class="px-4 py-3 border-bottom border-gray">
+    <h6 class="mt-0 mb-1">
+        {% if item.doi %}<a class="text-body" target="_blank" href="https://doi.org/{{ item.doi }}">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}
+    </h6>
+    <div class="small">{% include widgets/author_list.html authors=item.authors %}</div>
+    <div class="small text-muted">
+        {% if item.pub %}<i>{{ item.pub }}</i>, {% endif %}{{ year }}
+        {% if item.doi %} &middot; DOI: <a target="_blank" href="https://doi.org/{{ item.doi }}">{{ item.doi }}</a>{% endif %}
+    </div>
+</div>

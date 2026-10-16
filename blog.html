@@ -2,31 +2,25 @@
 layout: default
 title : Blog
 navbar_title: Blog
-container_class: container-xl
 ---
 
-{% assign cards_by_group = site.blog | sort: "date" | reverse | where: "show", true | group_by_exp: "item", "item.group" %}
-
-{% for group in cards_by_group %}
-<h1>{{ group.name }}</h1>
-<div class="row grid mb-4">
-    <div class="grid-sizer col-1"></div>
-    {% for item in group.items %}
-    {% if item.width >= 6 -%}
-        {%- assign width_sm = 12 -%}
-        {%- assign width_xs = 12 -%}
-    {%- elsif item.width >= 2 -%}
-        {%- assign width_sm = 6 -%}
-        {%- assign width_xs = 6 -%}
-    {%- else -%}
-        {%- assign width_sm = item.width | times: 2 | at_most: 12 -%}
-        {%- assign width_xs = item.width | times: 2 | at_most: 12 -%}
-    {%- endif -%}
-    <div class="p-2 grid-item col-md-{{ item.width | at_most: 12 }} col-sm-{{ width_sm }} col-{{ width_xs }}">
-        <div class="{% if item.class != null %}{{ item.class }}{% else %}card border-0 shadow-sm bg-white{% endif %}">
-            {{ item.content }}
-        </div>
+<div class="post mx-auto">
+    <h1 class="mb-4">Blog</h1>
+    {% if site.posts.size > 0 %}
+    <div class="card border-0 shadow-sm bg-white mb-4">
+        <ul class="list-unstyled mb-0">
+            {% for post in site.posts %}
+            <li class="d-flex align-items-baseline px-4 py-3{% unless forloop.last %} border-bottom border-gray{% endunless %}">
+                <span class="small text-muted no-break mr-3">{{ post.date | date: "%Y-%m-%d" }}</span>
+                <div>
+                    <a class="h6 mb-0 text-body" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+                    {% if post.description %}<div class="small text-muted mt-1">{{ post.description }}</div>{% endif %}
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
     </div>
-    {% endfor %}
+    {% else %}
+    <p class="text-muted my-5">No posts yet.</p>
+    {% endif %}
 </div>
-{% endfor %}
