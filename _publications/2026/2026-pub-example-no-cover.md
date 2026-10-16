@@ -1,4 +1,5 @@
 ---
+published:      false  # template example, not built; copy this file as a starting point for your own papers
 title:          "Publication without cover image"
 date:           2026-01-1 00:01:00 +0800
 selected:       false
