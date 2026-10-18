@@ -6,10 +6,18 @@ description: "A survey of representative LLMs to date: parameter counts, dense v
 
 ## Introduction
 
-
-## Model Parameters
-
+## Representative Models Overview
 
 ## Model Architecture
+### Tokenizer & Embedding Layer
+### Positional Encoding
+### Attention Mechanism
+### Normalization
+### Feed-Forward Network
+### Dense vs. MoE
 
-## Reference
+## Parameter Count Breakdown
+
+## Summary
+
+## References
