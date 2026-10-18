@@ -6,7 +6,9 @@ description: "L2 normalization and RMSNorm preserve the direction of a hidden ve
 
 ## Introduction
 
-Every Transformer layer normalizes its hidden vectors, and three operations come up again and again: L2 normalization, LayerNorm[^ln] and RMSNorm[^rmsnorm]. All three divide a vector by some measure of its size, so they are easy to treat as interchangeable. They are not, and the difference comes down to one question: **does the normalization preserve the direction of the input?**
+Every Transformer layer normalizes its hidden vectors, and in practice this is done by one of two operations: LayerNorm[^ln], used in the original Transformer[^transformer], GPT-2[^gpt2] and BERT[^bert], or RMSNorm[^rmsnorm], used in LLaMA[^llama] and most recent open LLMs. This post compares them with a third, simpler operation, L2 normalization. L2 normalization is not a normalization layer inside Transformers; it appears elsewhere, for example in embedding retrieval and contrastive learning, where only the direction of a vector matters. We include it as the reference point because it does the least possible, dividing a vector by its Euclidean norm and nothing else, and because RMSNorm will turn out to be exactly L2 normalization followed by a constant scale.
+
+All three divide a vector by some measure of its size, so they are easy to treat as interchangeable. They are not, and the difference comes down to one question: **does the normalization preserve the direction of the input?**
 
 L2 normalization and RMSNorm do: they only change the length of a vector. LayerNorm does not: it subtracts the mean before rescaling, and this rotates the vector by an angle that depends on the ratio of its mean to its standard deviation. This post makes that difference precise. We define the three operations, derive the relations between them and the angle by which LayerNorm rotates its input, and then verify the main claims numerically, including what the rotation buys LayerNorm (invariance to a shared shift) and what it costs (a distorted input).
 
