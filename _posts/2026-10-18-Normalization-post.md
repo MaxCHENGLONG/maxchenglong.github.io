@@ -1,16 +1,16 @@
 ---
 published: True
 title: "Normalization in Transformers"
-description: "L2 normalization and RMSNorm preserve the direction of a hidden vector; LayerNorm rotates it."
+description: "L2 normalization and RMSNorm preserve the direction of a hidden vector; LayerNorm changes it."
 ---
 
 ## Introduction
 
-Every Transformer layer normalizes its hidden vectors, and in practice this is done by one of two operations: LayerNorm[^ln], used in the original Transformer[^transformer], GPT-2[^gpt2] and BERT[^bert], or RMSNorm[^rmsnorm], used in LLaMA[^llama] and many recent open LLMs. This post compares them with a third, simpler operation, L2 normalization. L2 normalization is not a normalization layer inside Transformers; it appears elsewhere, for example in embedding retrieval and contrastive learning, where only the direction of a vector matters. We include it as the reference point because it does the least possible, dividing a vector by its Euclidean norm and nothing else, and because RMSNorm will turn out to be exactly L2 normalization followed by a constant scale, up to $\epsilon$ and the learnable gain.
+Every Transformer layer normalizes its hidden vectors, and in practice this is done by one of two operations: LayerNorm[^ln], used in the original Transformer[^transformer], GPT-2[^gpt2] and BERT[^bert], or RMSNorm[^rmsnorm], used in LLaMA[^llama] and many recent open LLMs. This post compares them with a third, simpler operation, L2 normalization. L2 normalization is not the standard choice for normalizing the residual stream of a Transformer, although it is used in some places, for example on queries and keys in QK-Norm[^qknorm] and on every hidden state in nGPT[^ngpt]; it is more common in embedding retrieval and contrastive learning, where only the direction of a vector matters. We include it as the reference point because it does the least possible, dividing a vector by its Euclidean norm and nothing else, and because RMSNorm will turn out to be exactly L2 normalization followed by a constant scale, up to $\epsilon$ and the learnable gain.
 
 All three divide a vector by some measure of its size, so they are easy to treat as interchangeable. They are not, and the difference comes down to one question: **does the normalization preserve the direction of the input?**
 
-L2 normalization and RMSNorm do: before the learnable gain, which we set aside throughout, they only change the length of a vector. LayerNorm does not: it subtracts the mean before rescaling, and this rotates the vector by an angle that depends on the ratio of its mean to its standard deviation. This post makes that difference precise. We define the three operations, derive the relations between them and the angle by which LayerNorm rotates its input, and then verify the main claims numerically, including what the rotation buys LayerNorm (invariance to a shared shift) and what it costs (a distorted input).
+L2 normalization and RMSNorm do: before the learnable gain, which we set aside throughout, they only change the length of a vector. LayerNorm does not: it subtracts the mean before rescaling, and this changes the direction of the vector by an angle that depends on the ratio of its mean to its standard deviation. This post makes that difference precise. We define the three operations, derive the relations between them and the angle by which LayerNorm changes the direction of its input, and then verify the main claims numerically, including what this change of direction buys LayerNorm (invariance to adding the same constant to every entry) and what it costs (the mean of the entries, which is lost).
 
 ## Definitions
 Throughout this post, let $\bm{x} = (x_1, \dots, x_d)^\top \in \mathbb{R}^{d}$ be the hidden vector of a single token, where $d$ is the hidden dimension. Let $\bm{1} \in \mathbb{R}^{d}$ denote the all-ones vector, $\odot$ element-wise multiplication, and $\epsilon > 0$ a small constant added for numerical stability. All three operations act on each token independently along the feature dimension; none of them uses statistics computed across the batch or the sequence. Concretely, for a hidden state of shape $(B, T, d)$, the statistics are computed over the last dimension $d$ only, separately for each of the $B \times T$ token vectors, so the output for one token depends only on that token's own $d$ entries.
@@ -26,7 +26,7 @@ $$
 
 Element-wise, the $i$-th output is $x_i / \lVert \bm{x} \rVert_2$. In practice the denominator is clamped to avoid division by zero, e.g. $\bm{x} / \max(\lVert \bm{x} \rVert_2, \epsilon_{\mathrm{L2}})$, where $\epsilon_{\mathrm{L2}}$ is a much smaller constant than the $\epsilon$ used by LayerNorm and RMSNorm below (around $10^{-12}$ in PyTorch).
 
-L2 normalization has no learnable parameters. It keeps the direction of $\bm{x}$ and discards only its length, so the output always lies on the unit sphere.
+L2 normalization has no learnable parameters. It keeps the direction of $\bm{x}$ and discards only its length, so the output lies on the unit sphere whenever $\lVert \bm{x} \rVert_2 \ge \epsilon_{\mathrm{L2}}$.
 
 ### Layer normalization (LayerNorm)
 
@@ -105,7 +105,7 @@ table.bordered td:first-child {
 
 ## Mathematical analysis
 
-Throughout this section we set $\epsilon = 0$ and drop the affine parameters ($\bm{\gamma} = \bm{g} = \bm{1}$, $\bm{\beta} = \bm{0}$) unless stated otherwise, and we assume $\bm{x}$ is neither zero nor a constant vector, so that $\lVert \bm{x} \rVert_2 > 0$ and $\sigma > 0$. The gain and bias are input-independent element-wise maps applied after the normalization, so every statement about direction below refers to the normalization step alone. A gain $\bm{g}$ that is not a multiple of $\bm{1}$ does change the direction of the output, but it does so in the same way for RMSNorm and LayerNorm, by the fixed diagonal map $\bm{y} \mapsto \bm{g} \odot \bm{y}$, and because the normalized vector is usually fed into a linear layer $\bm{W}$, this map can be absorbed into its weights, $\bm{W} (\bm{g} \odot \bm{y}) = (\bm{W} \, \mathrm{diag}(\bm{g})) \, \bm{y}$. The re-centering rotation studied below is different in kind: it depends on the input and cannot be absorbed into a weight matrix. The effect of the affine parameters on the output sets and the role of $\epsilon$ are discussed at the end of the section.
+Throughout this section we set $\epsilon = 0$ and drop the affine parameters ($\bm{\gamma} = \bm{g} = \bm{1}$, $\bm{\beta} = \bm{0}$) unless stated otherwise, and we assume $\bm{x}$ is neither zero nor a constant vector, so that $\lVert \bm{x} \rVert_2 > 0$ and $\sigma > 0$. The gain and bias are element-wise maps applied after the normalization, so every statement about direction below refers to the normalization step alone, before the gain. The effect of the affine parameters on the output sets and the role of $\epsilon$ are discussed at the end of the section.
 
 ### RMSNorm is a rescaled L2 normalization
 
@@ -171,9 +171,9 @@ $$
 \mathrm{RMSNorm}(\bm{x}) = \frac{\bm{P} \bm{x}}{\mathrm{RMS}(\bm{x})} + \frac{\mu \bm{1}}{\mathrm{RMS}(\bm{x})} = \sin\theta \; \mathrm{LayerNorm}(\bm{x}) + \cos\theta \; \bm{1} .
 $$
 
-Since $\mathrm{LayerNorm}(\bm{x})$ and $\bm{1}$ are orthogonal and both have length $\sqrt{d}$, the RMSNorm output lies on the great circle connecting them, at angle $\theta$ from $\bm{1}$. When $\bm{x}$ is orthogonal to $\bm{1}$ ($\theta = \pi/2$), the two outputs agree. When the mean dominates ($\theta \to 0$ or $\pi$), the RMSNorm output collapses towards $\pm \bm{1}$, while the LayerNorm output is unaffected.
+Since $\mathrm{LayerNorm}(\bm{x})$ and $\bm{1}$ are orthogonal and both have length $\sqrt{d}$, the RMSNorm output lies on the great circle connecting them, at angle $\theta$ from $\bm{1}$. When $\bm{x}$ is orthogonal to $\bm{1}$ ($\theta = \pi/2$), the two outputs agree. When the mean dominates ($\theta \to 0$ or $\pi$), the RMSNorm output approaches $\pm \bm{1}$, while the LayerNorm output is unaffected.
 
-### Direction: preserved by L2 normalization, rotated by LayerNorm
+### Direction: preserved by L2 normalization, changed by LayerNorm
 
 The identities above settle the central question of this post. L2 normalization and RMSNorm divide $\bm{x}$ by a positive scalar, so their outputs are parallel to the input:
 
@@ -189,7 +189,7 @@ $$
 \tan\phi = \frac{\lvert \mu \rvert}{\sigma} .
 $$
 
-The rotation is set entirely by the ratio of the mean to the standard deviation. It vanishes only when $\mu = 0$ and approaches $90^\circ$ when the mean dominates. In terms of the angle $\theta$ between $\bm{x}$ and $\bm{1}$ defined above, $\phi = \lvert \pi/2 - \theta \rvert$: LayerNorm rotates $\bm{x}$ within the plane spanned by $\bm{x}$ and $\bm{1}$ until it is orthogonal to $\bm{1}$. The rest of this section shows that the other differences between the three operations follow from this one.
+The angle $\phi$ is set entirely by the ratio of the mean to the standard deviation. It vanishes only when $\mu = 0$ and approaches $90^\circ$ when the mean dominates. In terms of the angle $\theta$ between $\bm{x}$ and $\bm{1}$ defined above, $\phi = \lvert \pi/2 - \theta \rvert$: within the plane spanned by $\bm{x}$ and $\bm{1}$, the LayerNorm output points in the direction orthogonal to $\bm{1}$. This is why LayerNorm changes the direction: $\bm{P}$ is an orthogonal projection, not a rotation, so the component of $\bm{x}$ along $\bm{1}$ is removed rather than turned, and what remains, $\bm{P} \bm{x}$, points in a different direction from $\bm{x}$ whenever that component is nonzero. The removed component cannot be recovered from the output. The rest of this section shows that the other differences between the three operations follow from this one.
 
 ### Invariance properties
 
@@ -207,7 +207,7 @@ $$
 \mathrm{LayerNorm}(\bm{x} + c \bm{1}) = \mathrm{LayerNorm}(\bm{x}) .
 $$
 
-L2 normalization and RMSNorm do not have this property. Adding $c \bm{1}$ changes $\mu$ and hence the angle $\theta$. As $c \to \pm\infty$, $\cos\theta \to \pm 1$, so $\mathrm{RMSNorm}(\bm{x} + c \bm{1}) \to \pm \bm{1}$ and $\mathrm{L2}(\bm{x} + c \bm{1}) \to \pm \bm{1} / \sqrt{d}$: the output forgets $\bm{x}$ entirely. Shift invariance is the other side of the rotation: LayerNorm can ignore $c \bm{1}$ only because it discards the component of $\bm{x}$ along $\bm{1}$, and discarding that component is exactly what changes the direction.
+L2 normalization and RMSNorm do not have this property. Adding $c \bm{1}$ changes $\mu$ and hence the angle $\theta$. As $c \to \pm\infty$, $\cos\theta \to \pm 1$, so $\mathrm{RMSNorm}(\bm{x} + c \bm{1}) \to \pm \bm{1}$ and $\mathrm{L2}(\bm{x} + c \bm{1}) \to \pm \bm{1} / \sqrt{d}$: the output forgets $\bm{x}$ entirely. Shift invariance is the other side of the change of direction: LayerNorm can ignore $c \bm{1}$ only because it discards the component of $\bm{x}$ along $\bm{1}$, and discarding that component is exactly what changes the direction.
 
 **Weight-level invariance.** Inside a network the input to a normalization layer is often the output of a linear layer, $\bm{x} = \bm{W} \bm{a}$. Scaling the weights, $\bm{W} \mapsto \alpha \bm{W}$ with $\alpha > 0$, scales $\bm{x}$ and leaves all three outputs unchanged. Adding the same vector $\bm{v}$ to every row of the weight matrix, $\bm{W} \mapsto \bm{W} + \bm{1} \bm{v}^\top$, shifts $\bm{x}$ by $(\bm{v}^\top \bm{a}) \bm{1}$, which only LayerNorm ignores.
 
@@ -264,7 +264,7 @@ $$
 \lVert \mathrm{RMSNorm}(\bm{x}) \rVert_2 = \sqrt{d} \, \frac{\mathrm{RMS}(\bm{x})}{\sqrt{\mathrm{RMS}(\bm{x})^2 + \epsilon}} < \sqrt{d},
 $$
 
-which is essentially $\sqrt{d}$ as long as $\mathrm{RMS}(\bm{x})^2 \gg \epsilon$. Scale invariance therefore holds only approximately. For very small inputs ($\mathrm{RMS}(\bm{x})^2 \lesssim \epsilon$), the operation behaves like the linear map $\bm{x} \mapsto \bm{x} / \sqrt{\epsilon}$ rather than a normalization. This is precisely what keeps the operation numerically stable: without $\epsilon$, the factor $1 / \mathrm{RMS}(\bm{x})$, and with it the gradient, diverges as $\bm{x} \to \bm{0}$, while with $\epsilon$ the factor never exceeds $1 / \sqrt{\epsilon}$. The same applies to LayerNorm with $\sigma^2$ in place of $\mathrm{RMS}(\bm{x})^2$; for a constant input $\bm{x} = c \bm{1}$ the LayerNorm output is simply $\bm{\beta}$. L2 normalization usually clamps the denominator instead, $\bm{x} / \max(\lVert \bm{x} \rVert_2, \epsilon_{\mathrm{L2}})$, with a much smaller constant (around $10^{-12}$ in PyTorch), so it is exactly scale-invariant except in a tiny neighborhood of the origin. Note that $\epsilon$ does not affect the direction of the L2 or RMSNorm output, since the input is still divided by a positive scalar; it only pulls the output slightly inside the sphere. Likewise, the LayerNorm output still lies in the hyperplane $\mathcal{H}$, slightly inside the sphere of radius $\sqrt{d}$.
+which is essentially $\sqrt{d}$ as long as $\mathrm{RMS}(\bm{x})^2 \gg \epsilon$. Scale invariance therefore holds only approximately. For very small inputs ($\mathrm{RMS}(\bm{x})^2 \ll \epsilon$), the operation behaves like the linear map $\bm{x} \mapsto \bm{x} / \sqrt{\epsilon}$ rather than a normalization. This is precisely what keeps the operation numerically stable: without $\epsilon$, the factor $1 / \mathrm{RMS}(\bm{x})$, and with it the gradient, diverges as $\bm{x} \to \bm{0}$, while with $\epsilon$ the factor never exceeds $1 / \sqrt{\epsilon}$. The same applies to LayerNorm with $\sigma^2$ in place of $\mathrm{RMS}(\bm{x})^2$; for a constant input $\bm{x} = c \bm{1}$ the LayerNorm output is simply $\bm{\beta}$. L2 normalization usually clamps the denominator instead, $\bm{x} / \max(\lVert \bm{x} \rVert_2, \epsilon_{\mathrm{L2}})$, with a much smaller constant (around $10^{-12}$ in PyTorch), so it is exactly scale-invariant except in a tiny neighborhood of the origin. Note that $\epsilon$ does not affect the direction of the L2 or RMSNorm output, since the input is still divided by a positive scalar; it only pulls the output slightly inside the sphere. Likewise, the LayerNorm output still lies in the hyperplane $\mathcal{H}$, slightly inside the sphere of radius $\sqrt{d}$.
 
 ### Summary
 
@@ -276,7 +276,7 @@ $$
 \mathrm{LayerNorm}(\bm{x}) = \mathrm{RMSNorm}(\bm{P} \bm{x}) = \sqrt{d} \; \mathrm{L2}(\bm{P} \bm{x}) .
 $$
 
-L2 normalization and RMSNorm differ only in the radius of the sphere, and both preserve the direction of $\bm{x}$. LayerNorm differs from RMSNorm only by the centering projection $\bm{P}$, which rotates $\bm{x}$ by $\phi = \arctan(\lvert \mu \rvert / \sigma)$. Every other difference comes with this rotation: invariance to shifts along $\bm{1}$, a $(d-2)$-dimensional output set instead of $(d-1)$, and the extra mean statistic LayerNorm has to compute.
+L2 normalization and RMSNorm differ only in the radius of the sphere, and both preserve the direction of $\bm{x}$. LayerNorm differs from RMSNorm only by the centering projection $\bm{P}$, which changes the direction of $\bm{x}$ by $\phi = \arctan(\lvert \mu \rvert / \sigma)$. Every other difference comes with this projection: invariance to shifts along $\bm{1}$, a $(d-2)$-dimensional output set instead of $(d-1)$, and the extra mean statistic LayerNorm has to compute.
 
 ## Experiments
 
@@ -285,7 +285,7 @@ To isolate the effect of each normalization, we compare idealized versions of th
 
 - **No affine parameters.** We set $\bm{\gamma} = \bm{g} = \bm{1}$ and $\bm{\beta} = \bm{0}$, so any difference in the outputs comes from the normalization itself rather than from learned parameters.
 - **Negligible $\epsilon$.** We keep $\epsilon = 10^{-5}$, which is far smaller than the variance of our inputs, so the idealized identities from the previous section hold almost exactly.
-- **Synthetic inputs with a controllable mean.** Each input is generated as $\bm{x} = \bm{z} + c\bm{1}$ with $\bm{z} \sim \mathcal{N}(\bm{0}, \bm{I}_d)$. The scalar $c$ controls how much of $\bm{x}$ lies along $\bm{1}$, which is exactly the component that re-centering removes, and therefore how far LayerNorm rotates $\bm{x}$.
+- **Synthetic inputs with a controllable mean.** Each input is generated as $\bm{x} = \bm{z} + c\bm{1}$ with $\bm{z} \sim \mathcal{N}(\bm{0}, \bm{I}_d)$. The scalar $c$ controls how much of $\bm{x}$ lies along $\bm{1}$, which is exactly the component that re-centering removes, and therefore by how much LayerNorm changes the direction of $\bm{x}$.
 - **Dimension and seed.** We use $2{,}000$ inputs with $d = 64$ for quantitative measurements and $100$ inputs with $d = 3$ for visualizing the output geometry. All inputs are drawn with NumPy's default generator seeded with $0$, and the same $\bm{z}$ is reused for every value of $c$.
 
 The scripts that produce the figures and the numbers below are [norm_geometry.py]({{ '/assets/code/normalization/norm_geometry.py' | relative_url }}) and [norm_comparison.py]({{ '/assets/code/normalization/norm_comparison.py' | relative_url }}).
@@ -296,7 +296,7 @@ Under these assumptions $\mathrm{RMSNorm}(\bm{x}) = \sqrt{d}\,\mathrm{L2}(\bm{x}
 
 <div class="post-figure-row">
 {% include figure.html src="/assets/images/blog/normalization/norm_geometry_c0.png" caption="$c = 0$: the inputs are centered at the origin. L2 normalization and RMSNorm only rescale each input, mapping it onto the sphere of radius $1$ and $\sqrt{3}$ respectively, so their outputs keep the directions of the inputs. LayerNorm first removes the component along $\bm{1}$, which changes the directions, and its outputs lie on a circle of radius $\sqrt{3}$ in the plane orthogonal to $\bm{1}$." %}
-{% include figure.html src="/assets/images/blog/normalization/norm_geometry_c2.png" caption="$c = 2$: the inputs are shifted along $\bm{1}$. L2 normalization and RMSNorm preserve the directions of the inputs, including this shared shift, so their outputs collapse towards the $\bm{1}$ direction. LayerNorm removes the shift, rotating every input, and its outputs are exactly the same points as for $c = 0$, since both panels use the same $\bm{z}$." %}
+{% include figure.html src="/assets/images/blog/normalization/norm_geometry_c2.png" caption="$c = 2$: the inputs are shifted along $\bm{1}$. L2 normalization and RMSNorm preserve the directions of the inputs, including the shift along $\bm{1}$, so their outputs cluster around the $\bm{1}$ direction. LayerNorm removes the shift, which changes the direction of every input, and its outputs are exactly the same points as for $c = 0$, since both panels use the same $\bm{z}$." %}
 </div>
 
 ## Comparison
@@ -309,13 +309,13 @@ $$
 \mathrm{L2}(\bm{x}) = \frac{\bm{x}}{\lVert \bm{x} \rVert_2} .
 $$
 
-L2 normalization only rescales $\bm{x}$ along its own ray. Every output lies on the unit sphere and points exactly in the direction of $\bm{x}$: the measured angle between $\bm{x}$ and $\mathrm{L2}(\bm{x})$ is $0.0^\circ$ for every $c$. Because nothing is subtracted, the shared component $c\bm{1}$ survives normalization and dominates the direction as $c$ grows. For two independent inputs $\bm{x}$ and $\bm{x}'$, the inner product $\bm{x}^\top \bm{x}'$ has expectation $d c^2$ and the squared norm $\lVert \bm{x} \rVert_2^2$ has expectation $d(1 + c^2)$. In high dimension both concentrate around their expectations, so the cosine similarity between their outputs is approximately
+L2 normalization only rescales $\bm{x}$ along its own ray. Every output lies on the unit sphere and points exactly in the direction of $\bm{x}$: the measured angle between $\bm{x}$ and $\mathrm{L2}(\bm{x})$ is $0.0^\circ$ for every $c$. Because nothing is subtracted, the component $c\bm{1}$ survives normalization and dominates the direction as $c$ grows. For two independent inputs $\bm{x}$ and $\bm{x}'$, the inner product $\bm{x}^\top \bm{x}'$ has expectation $d c^2$ and the squared norm $\lVert \bm{x} \rVert_2^2$ has expectation $d(1 + c^2)$. In high dimension both concentrate around their expectations, so the cosine similarity between their outputs is approximately
 
 $$
 \cos\angle(\bm{x}, \bm{x}') \approx \frac{c^2}{1 + c^2} .
 $$
 
-When $c = 0$, the outputs are spread over the whole sphere and the mean cosine similarity is $0.00$. When $c = 2$, it is already $0.80$, and at $c = 5$ it reaches $0.96$, matching the prediction $c^2 / (1 + c^2)$ to two decimals at every $c$; the residual differences, of order $10^{-3}$, come from the finite dimension $d = 64$. The outputs collapse into a small cap around $\bm{1}$, and different inputs become hard to tell apart.
+When $c = 0$, the outputs are spread over the whole sphere and the mean cosine similarity is $0.00$. When $c = 2$, it is already $0.80$, and at $c = 5$ it reaches $0.96$, matching the prediction $c^2 / (1 + c^2)$ to two decimals at every $c$; the residual differences, of order $10^{-3}$, come from the finite dimension $d = 64$. The outputs cluster in a small cap around $\bm{1}$. This is not something L2 normalization introduces: cosine similarity is invariant to positive scaling, so the cosine between two L2 outputs is exactly the cosine between the two inputs. L2 normalization simply leaves the component along $\bm{1}$ in place, together with the rest of $\bm{x}$, which is only rescaled.
 
 ### RMSNorm
 
@@ -325,7 +325,7 @@ $$
 \mathrm{RMSNorm}(\bm{x}) = \frac{\bm{x}}{\mathrm{RMS}(\bm{x})} = \sqrt{d} \, \frac{\bm{x}}{\lVert \bm{x} \rVert_2} = \sqrt{d} \; \mathrm{L2}(\bm{x}) .
 $$
 
-RMSNorm is L2 normalization followed by the constant scale $\sqrt{d}$. Its outputs lie on the sphere of radius $\sqrt{d}$, on the same rays as the L2 outputs, so it preserves the direction of $\bm{x}$ as well and its cosine similarities are identical to those of L2 normalization. The only discrepancy comes from $\epsilon$: the largest entry-wise gap between $\mathrm{RMSNorm}(\bm{x})$ and $\sqrt{d} \, \mathrm{L2}(\bm{x})$ is $3.0 \times 10^{-5}$ at $c = 0$, and it shrinks as $c$ grows, down to $3.8 \times 10^{-7}$ at $c = 5$, because the relative effect of $\epsilon$ is about $\epsilon / (2 \, \mathrm{RMS}(\bm{x})^2)$ and $\mathrm{RMS}(\bm{x})^2 \approx 1 + c^2$. The choice between the two therefore only fixes the output scale. Every geometric property of L2 normalization carries over, including the fact that the shared component $c\bm{1}$ is kept.
+RMSNorm is L2 normalization followed by the constant scale $\sqrt{d}$. Its outputs lie on the sphere of radius $\sqrt{d}$, on the same rays as the L2 outputs, so it preserves the direction of $\bm{x}$ as well and its cosine similarities are identical to those of L2 normalization. The only discrepancy comes from $\epsilon$: the largest entry-wise gap between $\mathrm{RMSNorm}(\bm{x})$ and $\sqrt{d} \, \mathrm{L2}(\bm{x})$ is $3.0 \times 10^{-5}$ at $c = 0$, and it shrinks as $c$ grows, down to $3.8 \times 10^{-7}$ at $c = 5$, because $\mathrm{RMS}(\bm{x})^2 \approx 1 + c^2$ grows with $c$. To first order in $\epsilon$, the gap in entry $i$ is $\lvert x_i \rvert \, \epsilon / (2 \, \mathrm{RMS}(\bm{x})^3)$, and its largest value over all inputs and entries reproduces the measured maxima to two significant figures. The choice between the two therefore only fixes the output scale. Every geometric property of L2 normalization carries over, including the fact that the component $c\bm{1}$ is kept.
 
 ### LayerNorm
 
@@ -343,22 +343,22 @@ $$
 
 For our inputs $\mu \approx c$ and $\sigma \approx 1$, so $\phi \approx \arctan(c)$ once $c$ is not small. In the experiment, the mean angle grows from $5.8^\circ$ at $c = 0$ to $78.8^\circ$ at $c = 5$, and the measured angle agrees with $\arctan(\lvert \mu \rvert / \sigma)$ for every individual input up to $10^{-10}$ degrees. The $5.8^\circ$ at $c = 0$ is not zero because a finite sample of $d = 64$ entries never has exactly zero mean: $\lvert \mu \rvert / \sigma$ is about $\sqrt{2/\pi} / \sqrt{d} \approx 0.10$, which gives $\arctan(0.10) \approx 5.7^\circ$, close to the measured mean.
 
-This rotation is what makes LayerNorm robust to the shared component. Its outputs satisfy both $\lVert \bm{y} \rVert_2 = \sqrt{d}$ and $\bm{1}^\top \bm{y} = 0$, so they lie on a $(d-2)$-dimensional sphere, which is a circle of radius $\sqrt{3}$ when $d = 3$. Since $\bm{P}(\bm{z} + c\bm{1}) = \bm{P} \bm{z}$, the shift $c\bm{1}$ is removed exactly. In the experiment, the LayerNorm outputs for any $c$ differ from those for $c = 0$ by at most $2 \times 10^{-15}$, which is floating-point round-off, and the mean cosine similarity between different outputs stays at $0.00$ for every $c$.
+This change of direction is what makes LayerNorm invariant to shifts along $\bm{1}$. Its outputs satisfy both $\lVert \bm{y} \rVert_2 = \sqrt{d}$ and $\bm{1}^\top \bm{y} = 0$, so they lie on a $(d-2)$-dimensional sphere, which is a circle of radius $\sqrt{3}$ when $d = 3$. Since $\bm{P}(\bm{z} + c\bm{1}) = \bm{P} \bm{z}$, the shift $c\bm{1}$ is removed exactly. In the experiment, the LayerNorm outputs for any $c$ differ from those for $c = 0$ by at most $2 \times 10^{-15}$, which is floating-point round-off, and the mean cosine similarity between different outputs stays at $0.00$ for every $c$. This invariance is specific to the direction $\bm{1}$: for any other direction $\bm{m}$, $\bm{P} \bm{m} \neq \bm{0}$, so a shift $c \bm{m}$ is not removed. As a check, replacing $c\bm{1}$ by $c\bm{m}$ with $\bm{m}$ a random direction of the same length $\sqrt{d}$ gives a mean cosine similarity of $0.96$ at $c = 5$ for the LayerNorm outputs, the same as for L2 normalization.
 
 ### Measured values
 
-Each quantity is averaged over the $2{,}000$ inputs at every value of $c$. The cosine similarities are averaged over all $2{,}000 \times 1{,}999 / 2$ distinct pairs of inputs, that is, over the off-diagonal entries of the $2{,}000 \times 2{,}000$ cosine-similarity matrix. The rows marked *predicted* are the closed-form approximations derived above.
+Each quantity is averaged over the $2{,}000$ inputs at every value of $c$. The cosine similarities are averaged over all $2{,}000 \times 1{,}999 / 2$ distinct pairs of inputs, that is, over the off-diagonal entries of the $2{,}000 \times 2{,}000$ cosine-similarity matrix. The rows marked *predicted* are the closed-form approximations derived above: $\arctan c$ for the angle, with $\arctan(\sqrt{2/\pi} / \sqrt{d}) \approx 5.7^\circ$ at $c = 0$; $c^2 / (1 + c^2)$ for the cosine similarity; and, for the gap between RMSNorm and rescaled L2, the first-order term $\lvert x_i \rvert \, \epsilon / (2 \, \mathrm{RMS}(\bm{x})^3)$, maximized over all inputs and entries.
 
-**Rotation of the input: mean angle between $\bm{x}$ and its normalized output.**
+**Change of direction: mean angle between $\bm{x}$ and its normalized output.**
 
 | | $c = 0$ | $c = 0.5$ | $c = 1$ | $c = 2$ | $c = 3$ | $c = 5$ |
 |---|---|---|---|---|---|---|
 | L2 normalization, RMSNorm | $0.0^\circ$ | $0.0^\circ$ | $0.0^\circ$ | $0.0^\circ$ | $0.0^\circ$ | $0.0^\circ$ |
 | LayerNorm | $5.8^\circ$ | $26.6^\circ$ | $45.2^\circ$ | $63.6^\circ$ | $71.7^\circ$ | $78.8^\circ$ |
-| LayerNorm, predicted $\arctan c$ | $0.0^\circ$ | $26.6^\circ$ | $45.0^\circ$ | $63.4^\circ$ | $71.6^\circ$ | $78.7^\circ$ |
+| LayerNorm, predicted | $5.7^\circ$ | $26.6^\circ$ | $45.0^\circ$ | $63.4^\circ$ | $71.6^\circ$ | $78.7^\circ$ |
 {: .bordered}
 
-**Collapse of the outputs: mean cosine similarity between the outputs of two different inputs.**
+**Clustering of the outputs: mean cosine similarity between the outputs of two different inputs.** For L2 normalization and RMSNorm this is also the mean cosine similarity of the inputs themselves.
 
 | | $c = 0$ | $c = 0.5$ | $c = 1$ | $c = 2$ | $c = 3$ | $c = 5$ |
 |---|---|---|---|---|---|---|
@@ -372,6 +372,7 @@ Each quantity is averaged over the $2{,}000$ inputs at every value of $c$. The c
 | | $c = 0$ | $c = 0.5$ | $c = 1$ | $c = 2$ | $c = 3$ | $c = 5$ |
 |---|---|---|---|---|---|---|
 | Measured | $3.0 \times 10^{-5}$ | $2.5 \times 10^{-5}$ | $1.2 \times 10^{-5}$ | $3.5 \times 10^{-6}$ | $1.3 \times 10^{-6}$ | $3.8 \times 10^{-7}$ |
+| Predicted | $3.0 \times 10^{-5}$ | $2.5 \times 10^{-5}$ | $1.2 \times 10^{-5}$ | $3.5 \times 10^{-6}$ | $1.3 \times 10^{-6}$ | $3.8 \times 10^{-7}$ |
 {: .bordered}
 
 ### At a glance
@@ -379,7 +380,7 @@ Each quantity is averaged over the $2{,}000$ inputs at every value of $c$. The c
 | | L2 normalization | RMSNorm | LayerNorm |
 |---|---|---|---|
 | Output | $\bm{x} / \lVert \bm{x} \rVert_2$ | $\sqrt{d} \, \bm{x} / \lVert \bm{x} \rVert_2$ | $\sqrt{d} \, \bm{P} \bm{x} / \lVert \bm{P} \bm{x} \rVert_2$ |
-| Direction of $\bm{x}$ preserved | yes | yes | no, rotated by $\arctan(\lvert \mu \rvert / \sigma)$ |
+| Direction of $\bm{x}$ preserved | yes | yes | no, changed by $\arctan(\lvert \mu \rvert / \sigma)$ |
 | Re-centering | no | no | yes |
 | Output set | sphere of radius $1$ | sphere of radius $\sqrt{d}$ | $(d-2)$-sphere of radius $\sqrt{d}$ in $\bm{1}^\perp$ |
 | Invariant to $\bm{x} \mapsto \alpha \bm{x}$, $\alpha > 0$ | yes | yes | yes |
@@ -391,33 +392,33 @@ Each quantity is averaged over the $2{,}000$ inputs at every value of $c$. The c
 Three points stand out:
 
 1. **L2 normalization and RMSNorm preserve the direction of $\bm{x}$.** Both only change its length and are the same operation up to a constant scale; in the experiment their outputs agree up to $3 \times 10^{-5}$, the effect of $\epsilon$. Any difference between them in practice comes from the output scale and the learned gain, not from the geometry.
-2. **LayerNorm changes the direction of $\bm{x}$, and every other difference comes with that rotation.** Re-centering rotates the input by $\arctan(\lvert \mu \rvert / \sigma)$. In exchange, LayerNorm is invariant to a shared shift, which keeps its outputs from collapsing towards $\bm{1}$ (mean cosine similarity $0.00$ instead of $0.96$ at $c = 5$).
-3. **How large the rotation is depends on the input.** For roughly zero-mean inputs in high dimension, $\lvert \mu \rvert / \sigma$ is of order $1 / \sqrt{d}$, so the rotation is small ($5.8^\circ$ at $d = 64$, and smaller for larger $d$) and LayerNorm behaves almost like RMSNorm. The two only diverge when the inputs carry a large component along $\bm{1}$.
+2. **LayerNorm changes the direction of $\bm{x}$, and every other difference comes with that change.** Re-centering removes the component of the input along $\bm{1}$, which changes its direction by $\arctan(\lvert \mu \rvert / \sigma)$. In exchange, LayerNorm is invariant to shifts along $\bm{1}$, so its outputs do not cluster around $\bm{1}$ (mean cosine similarity $0.00$ instead of $0.96$ at $c = 5$). Shifts along any other direction are not removed.
+3. **How large the change of direction is depends on the input.** For roughly zero-mean inputs in high dimension, $\lvert \mu \rvert / \sigma$ is of order $1 / \sqrt{d}$, so the angle is small ($5.8^\circ$ at $d = 64$, and smaller for larger $d$) and LayerNorm behaves almost like RMSNorm. The two only diverge when the inputs carry a large component along $\bm{1}$.
 
 ## Conclusion
 
-The central difference between L2 normalization and LayerNorm is what happens to the direction of the input. **L2 normalization preserves the direction of $\bm{x}$; LayerNorm changes it.**
+The central difference between RMSNorm and LayerNorm is what happens to the direction of the input. **RMSNorm, like L2 normalization, preserves the direction of $\bm{x}$; LayerNorm changes it.**
 
-L2 normalization only rescales $\bm{x}$ along its own ray. Its output is parallel to the input, so the angle between them is always $0^\circ$, and only the length of $\bm{x}$ is lost. RMSNorm is the same operation with a different radius, $\mathrm{RMSNorm}(\bm{x}) = \sqrt{d} \; \mathrm{L2}(\bm{x})$, so it preserves the direction too; in our experiment the two agree up to $3 \times 10^{-5}$, the effect of $\epsilon$.
+RMSNorm is L2 normalization followed by the constant scale $\sqrt{d}$, $\mathrm{RMSNorm}(\bm{x}) = \sqrt{d} \; \mathrm{L2}(\bm{x})$; in our experiment the two agree up to $3 \times 10^{-5}$, the effect of $\epsilon$. Both only rescale $\bm{x}$ along its own ray. The output is parallel to the input, so the angle between them is always $0^\circ$, and only the length of $\bm{x}$ is lost.
 
-LayerNorm first removes the mean, $\bm{x} \mapsto \bm{P} \bm{x}$, and only then normalizes, $\mathrm{LayerNorm}(\bm{x}) = \mathrm{RMSNorm}(\bm{P} \bm{x})$. Removing the component $\mu \bm{1}$ rotates the input, and the angle between $\bm{x}$ and its output is
+LayerNorm first removes the mean, $\bm{x} \mapsto \bm{P} \bm{x}$, and only then normalizes, $\mathrm{LayerNorm}(\bm{x}) = \mathrm{RMSNorm}(\bm{P} \bm{x})$. Removing the component $\mu \bm{1}$ changes the direction of the input, and the angle between $\bm{x}$ and its output is
 
 $$
 \phi = \arctan\frac{\lvert \mu \rvert}{\sigma} .
 $$
 
-The rotation is set entirely by the ratio of the mean to the standard deviation. In our experiment it grows from $5.8^\circ$ at $c = 0$ to $78.8^\circ$ at $c = 5$, and for every individual input it equals this formula, evaluated with that input's own $\mu$ and $\sigma$, to $10^{-10}$ degrees. The $5.8^\circ$ at $c = 0$, rather than $0^\circ$, comes from the sample mean of a $64$-dimensional Gaussian vector, which is of order $1/\sqrt{d}$ rather than exactly zero.
+The angle is set entirely by the ratio of the mean to the standard deviation. In our experiment it grows from $5.8^\circ$ at $c = 0$ to $78.8^\circ$ at $c = 5$, and for every individual input it equals this formula, evaluated with that input's own $\mu$ and $\sigma$, to $10^{-10}$ degrees. The $5.8^\circ$ at $c = 0$, rather than $0^\circ$, comes from the sample mean of a $64$-dimensional Gaussian vector, which is of order $1/\sqrt{d}$ rather than exactly zero.
 
 The other differences between the two follow from this one:
 
-- **Shift invariance.** Because L2 normalization keeps the direction, it also keeps any component shared by all inputs. As that component grows, the outputs collapse towards $\bm{1}$, and the mean cosine similarity between different outputs reaches $0.96$ at $c = 5$. LayerNorm discards exactly that component, so its outputs are invariant to shifts along $\bm{1}$ and stay spread out, with a mean cosine similarity of $0.00$ for every $c$.
-- **Output geometry.** L2 normalization keeps every direction and maps onto a full $(d-1)$-dimensional sphere. LayerNorm keeps only directions orthogonal to $\bm{1}$ and maps onto a $(d-2)$-dimensional sphere, removing one extra degree of freedom.
+- **Shift invariance.** Because L2 normalization and RMSNorm keep the direction, they also keep the component of $\bm{x}$ along $\bm{1}$. As that component grows, the outputs cluster around $\bm{1}$, and the mean cosine similarity between different outputs reaches $0.96$ at $c = 5$, the same value as for the inputs themselves. LayerNorm removes exactly that component, so its outputs are invariant to shifts along $\bm{1}$ and stay spread out, with a mean cosine similarity of $0.00$ for every $c$. Shifts along any other direction are not removed.
+- **Output geometry.** L2 normalization and RMSNorm keep every direction and map onto a full $(d-1)$-dimensional sphere. LayerNorm keeps only directions orthogonal to $\bm{1}$ and maps onto a $(d-2)$-dimensional sphere, removing one extra degree of freedom.
 
-So the choice between them is a trade-off. Preserving the direction keeps all the information in $\bm{x}$, including the shared component. Changing the direction buys robustness to that component, at the price of distorting the input.
+So the choice between them is a trade-off. Preserving the direction keeps all the directional information in $\bm{x}$, including the component along $\bm{1}$. Changing the direction buys invariance to that component, at the price of losing it: one degree of freedom of $\bm{x}$ is removed.
 
-How large this distortion is in practice depends on the input. For roughly zero-mean inputs in high dimension, $\lvert \mu \rvert / \sigma$ is of order $1 / \sqrt{d}$. The rotation is then small ($5.8^\circ$ at $d = 64$, and smaller for larger $d$), and LayerNorm behaves almost like RMSNorm, which preserves the direction. In that regime, dropping re-centering costs little and saves a statistic and a bias vector per layer. This is consistent with the hypothesis of Zhang and Sennrich[^rmsnorm] that re-scaling invariance, not re-centering invariance, is what normalization needs, and with the move from LayerNorm in GPT-2[^gpt2] and BERT[^bert] to RMSNorm in LLaMA[^llama].
+How large this change of direction is in practice depends on the input. For roughly zero-mean inputs in high dimension, $\lvert \mu \rvert / \sigma$ is of order $1 / \sqrt{d}$. The angle is then small ($5.8^\circ$ at $d = 64$, and smaller for larger $d$), and LayerNorm behaves almost like RMSNorm, which preserves the direction. In that regime, dropping re-centering costs little and saves one statistic per layer. This is consistent with the hypothesis of Zhang and Sennrich[^rmsnorm] that re-scaling invariance, not re-centering invariance, is what normalization needs, and with the move from LayerNorm in GPT-2[^gpt2] and BERT[^bert] to RMSNorm in LLaMA[^llama].
 
-Our analysis uses an idealized setting: no affine parameters, negligible $\epsilon$ and synthetic Gaussian inputs. In a trained model the learned gain and bias reshape the output sphere into an ellipsoid, and real hidden states are not isotropic Gaussians. A natural next step is to measure $\lvert \mu \rvert / \sigma$ on the hidden states of a real LLM. That ratio fixes the angle by which LayerNorm would rotate them, and it shows how far real hidden states are from the regime where preserving or changing the direction makes no difference.
+Our analysis uses an idealized setting: no affine parameters, negligible $\epsilon$ and synthetic Gaussian inputs. In a trained model the learned gain and bias reshape the output sphere into an ellipsoid, and real hidden states are not isotropic Gaussians. A natural next step is to measure $\lvert \mu \rvert / \sigma$ on the hidden states of a real LLM. That ratio fixes the angle by which LayerNorm would change their direction, and it shows how far real hidden states are from the regime where preserving or changing the direction makes no difference.
 
 ## References
 [^ln]: Ba, J. L., Kiros, J. R., & Hinton, G. E. (2016). *Layer Normalization*. [arXiv:1607.06450](https://arxiv.org/abs/1607.06450)
@@ -431,3 +432,7 @@ Our analysis uses an idealized setting: no affine parameters, negligible $\epsil
 [^bert]: Devlin, J., Chang, M.-W., Lee, K., & Toutanova, K. (2019). *BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding*. NAACL. [arXiv:1810.04805](https://arxiv.org/abs/1810.04805)
 
 [^transformer]: Vaswani, A., Shazeer, N., Parmar, N., et al. (2017). *Attention Is All You Need*. NeurIPS. [arXiv:1706.03762](https://arxiv.org/abs/1706.03762)
+
+[^qknorm]: Henry, A., Dachapally, P. R., Pawar, S. S., & Chen, Y. (2020). *Query-Key Normalization for Transformers*. Findings of EMNLP. [arXiv:2010.04245](https://arxiv.org/abs/2010.04245)
+
+[^ngpt]: Loshchilov, I., Hsieh, C.-P., Sun, S., & Ginsburg, B. (2024). *nGPT: Normalized Transformer with Representation Learning on the Hypersphere*. [arXiv:2410.01131](https://arxiv.org/abs/2410.01131)
