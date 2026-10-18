@@ -114,6 +114,15 @@ div.lazy {
     height: auto;
 }
 
+/* Small gap around inline math so neighbouring words don't look glued to it */
+.post-content .katex {
+    margin: 0 0.15em;
+}
+
+.post-content .katex-display > .katex {
+    margin: 0;
+}
+
 .post-content pre {
     background: #f6f8fa;
     padding: 1rem;
@@ -123,6 +132,19 @@ div.lazy {
 .post-figure {
     margin: 2rem 0;
     text-align: center;
+}
+
+/* Several figures side by side; stacks on narrow screens */
+.post-figure-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.post-figure-row .post-figure {
+    flex: 1 1 360px;
+    margin: 0;
 }
 
 .post-figure img {
