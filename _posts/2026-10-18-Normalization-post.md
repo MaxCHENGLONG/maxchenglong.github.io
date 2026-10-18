@@ -6,8 +6,6 @@ scripts:
   - https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js
 ---
 
-# Normalization in LLMs
-
 ## Introduction
 
 ## Definitions
