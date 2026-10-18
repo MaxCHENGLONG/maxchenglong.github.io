@@ -14,8 +14,9 @@ import numpy as np
 
 D, N, EPS, SEED = 3, 100, 1e-5, 0
 COLORS = {"input": "#444444", "l2": "#2a7bde", "rms": "#1aab78", "ln": "#ee6a33"}
-# Axis ticks and limits for each shift c.
-SETTINGS = {0: dict(ticks=[-2.5, 0.0, 2.5], lim=3.2), 2: dict(ticks=[-4, 0, 4], lim=5.2)}
+# The shifts c to draw, and one set of axis ticks and limits shared by all panels so they can be compared directly.
+C_VALUES = [0, 2]
+AXIS = dict(ticks=[-4, 0, 4], lim=5.2)
 
 plt.rcParams.update({
     "font.family": "STIXGeneral",
@@ -48,7 +49,6 @@ def ln_circle(n=200):
 
 def plot(c, Z, out):
     X = Z + c
-    cfg = SETTINGS[c]
     fig = plt.figure(figsize=(3.2, 2.7))
     ax = fig.add_subplot(projection="3d")
     ax.set_box_aspect((1, 1, 1), zoom=1.1)
@@ -60,22 +60,22 @@ def plot(c, Z, out):
     ax.scatter(*rmsnorm(X).T, s=s, color=COLORS["rms"], label="RMSNorm", depthshade=False)
     ax.scatter(*layernorm(X).T, s=s, color=COLORS["ln"], label="LayerNorm", depthshade=False)
     ax.plot(*ln_circle().T, color=COLORS["ln"], lw=0.8, ls="--", alpha=0.7)
-    t = np.array([-cfg["lim"], cfg["lim"]])
+    t = np.array([-AXIS["lim"], AXIS["lim"]])
     ax.plot(t, t, t, color="black", lw=0.9, ls=":", label=r"$\mathbf{1}$ direction")
 
     for axis, name in zip((ax.xaxis, ax.yaxis, ax.zaxis), ("$x_1$", "$x_2$", "$x_3$")):
         axis.pane.fill = False
         axis.pane.set_edgecolor("#dddddd")
         axis._axinfo["grid"].update(color="#e6e6e6", linewidth=0.5)
-        axis.set_ticks(cfg["ticks"])
+        axis.set_ticks(AXIS["ticks"])
         axis.set_label_text(name)
         axis.labelpad = -4
     ax.tick_params(pad=-2)
     ax.zaxis.set_rotate_label(False)
     ax.zaxis.label.set_rotation(0)
-    ax.set_xlim(-cfg["lim"], cfg["lim"])
-    ax.set_ylim(-cfg["lim"], cfg["lim"])
-    ax.set_zlim(-cfg["lim"], cfg["lim"])
+    ax.set_xlim(-AXIS["lim"], AXIS["lim"])
+    ax.set_ylim(-AXIS["lim"], AXIS["lim"])
+    ax.set_zlim(-AXIS["lim"], AXIS["lim"])
 
     ax.set_title(f"$c$ = {c}", y=1.07, fontsize=11)
     fig.legend(loc="upper center", bbox_to_anchor=(0.5, 0.9), ncol=5, frameon=False,
@@ -91,7 +91,7 @@ def main():
 
     # The same z is used for every c, so the LayerNorm outputs are identical across figures.
     Z = np.random.default_rng(SEED).standard_normal((N, D))
-    for c in SETTINGS:
+    for c in C_VALUES:
         plot(c, Z, f"norm_geometry_c{c}.pdf")
         if args.png:
             plot(c, Z, f"norm_geometry_c{c}.png")
